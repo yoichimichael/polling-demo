@@ -2,6 +2,14 @@ h1 {
   text-align: center;
 }
 
+.lucy-painting {
+  text-align: center;
+}
+
 img {
-  align-self: center;
+  width: 500px;
+}
+
+a {
+  text-align: center;
 }
