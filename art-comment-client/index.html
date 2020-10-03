@@ -13,13 +13,15 @@
       </figure>
     </section>
     <section class="section-comments">
-      <label>Well, what do you think?</label>
-      <textarea placeholder="Share your thoughts here"></textarea>
-      <label>Your Name:</label>
-      <input type="text">
-      <button class="btn">Show Comments</button>
-      <div class="comments"></div>
-      <script type="text/javascript" src="script.js"></script>
+      <form class="comment-form">
+        <label for="comment">Well, what do you think?</label>
+        <textarea name="comment" placeholder="Share your thoughts here"></textarea>
+        <label for="name">What's your name:</label>
+        <input name="name" type="text">
+        <input type="submit" value="Leave your comment">
+        <div class="comments"></div>
+      </form>
     </section>
+    <script type="text/javascript" src="script.js"></script>
   </body>
 </html>

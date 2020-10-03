@@ -14,8 +14,13 @@ a {
   text-align: center;
 }
 
-.section-comments { 
+.comment-form { 
   display: flex;
   align-items: center;
   flex-direction: column;
+}
+
+textarea {
+  height: 100px;
+  width: 500px;
 }
