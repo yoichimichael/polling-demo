@@ -13,3 +13,9 @@ img {
 a {
   text-align: center;
 }
+
+.section-comments { 
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
