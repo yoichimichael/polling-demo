@@ -24,3 +24,14 @@ textarea {
   height: 100px;
   width: 500px;
 }
+
+.comments {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.comments p {
+  color: red;
+  font-weight: 300;
+}
