@@ -34,4 +34,6 @@ textarea {
 .comments p {
   color: red;
   font-weight: 300;
+  font-size: large;
+  font-style: italic;
 }
