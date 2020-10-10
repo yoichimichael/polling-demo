@@ -18,19 +18,7 @@ function handleSubmit(e) {
 	const commenter = e.target.name.value;
 	const comment = e.target.comment.value;
 
-	fetch(COMMENTS_URL, {
-		method: "POST",
-		headers: HEADERS,
-		body: JSON.stringify({
-			name: commenter,
-			content: comment
-		})
-	})
-        // .then(resp => resp.json())
-        // .then(data=> this.props.addMember(data))
-
-	// console.dir(form);
-	// console.log(form.comment.value, form.name.value);
+	postFetch(COMMENTS_URL)
 }
 
 
@@ -40,7 +28,9 @@ function fetchComments() {
 
 
 function getFetch(url) {
+	// clears comments section before repopulating
 	commentsDiv.innerHTML = "";
+
 	fetch(url)
 	.then(resp => resp.json())
 	.then(comments => {
@@ -52,7 +42,6 @@ function getFetch(url) {
 	})
 }
 
-/*
 function postFetch(url) {
 	fetch(url, {
 		method: "POST",
@@ -63,4 +52,3 @@ function postFetch(url) {
 		})
 	})	
 }
-*/
