@@ -9,8 +9,9 @@ This is a small program designed to show polling
 2. add routes
     - √ 'get' to comments, index
     - 'post' to comments, create
-3. flesh out model
-4. add controller
+3. add create function in comments controller
 
 #### client 
-1. add data from API to DOM at DOMContentLoaded event
+1. √ add data from API to DOM at DOMContentLoaded event
+2. add post fetch for new comments
+3. add setInterval method to fetch new comments without page refresh

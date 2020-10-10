@@ -5,8 +5,12 @@ class CommentsController < ApplicationController
 		render json: comments
 	end
 
-	# def comment_params
-	# 	params.require
-	# end
+	def create
+		comment = Comment.create(comment_params)
+	end
+
+	def comment_params
+		params.require(:comment).permit(:content, :name)
+	end
 	
 end
