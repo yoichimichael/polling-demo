@@ -9,22 +9,58 @@ const HEADERS = {
 const commentForm = document.querySelector('.comment-form');
 const commentsDiv = document.querySelector('div.comments');
 
-document.addEventListener("DOMContentLoaded", addParagraphElement());
+//event listeners
+document.addEventListener("DOMContentLoaded", fetchComments());
 commentForm.addEventListener("submit", handleSubmit);
 
 function handleSubmit(e) {
 	e.preventDefault();
-	console.log("hello")
+	const commenter = e.target.name.value;
+	const comment = e.target.comment.value;
+
+	fetch(COMMENTS_URL, {
+		method: "POST",
+		headers: HEADERS,
+		body: JSON.stringify({
+			name: commenter,
+			content: comment
+		})
+	})
+        // .then(resp => resp.json())
+        // .then(data=> this.props.addMember(data))
+
+	// console.dir(form);
+	// console.log(form.comment.value, form.name.value);
 }
 
-function addParagraphElement() {	
-	fetch(COMMENTS_URL)
+
+function fetchComments() {
+	let interval = setInterval(getFetch, 3000, COMMENTS_URL);
+}
+
+
+function getFetch(url) {
+	commentsDiv.innerHTML = "";
+	fetch(url)
 	.then(resp => resp.json())
 	.then(comments => {
 		comments.forEach(comment => {
-			let p = document.createElement('p')
-			p.innerText = `${comment.content} - ${comment.name}`
-			commentsDiv.appendChild(p)
+			let p = document.createElement('p');
+			p.innerText = `${comment.content} - ${comment.name}`;
+			commentsDiv.appendChild(p);
 		});
 	})
 }
+
+/*
+function postFetch(url) {
+	fetch(url, {
+		method: "POST",
+		headers: HEADERS,
+		body: JSON.stringify({
+			name: commenter,
+			content: comment
+		})
+	})	
+}
+*/
