@@ -22,7 +22,9 @@ function handleSubmit(e) {
 	const commenter = e.target.name.value;
 	const comment = e.target.comment.value;
 
-	postFetch(COMMENTS_URL)
+	postFetch(COMMENTS_URL, commenter, comment)
+	commenter = '';
+	comment = '';
 }
 
 // regular polling technique
@@ -33,7 +35,7 @@ function fetchComments() {
 
 let numOfComments;
 
-// returns sets above variable and returns comments
+/*
 async function asyncFetchComments(url) {
 	// let promise = await fetch(url);
 	fetch(url)
@@ -43,53 +45,31 @@ async function asyncFetchComments(url) {
 		console.log(numOfComments)
 		return comments;
 	})
-	// let comments = response.json()
-	// console.log(comments);
-	// numOfComments = response.json().length;
 }
+*/
 
+// long polling technique
 async function checkForNewComments(url) {
+	// console.log("hey!")
 	let response = await fetch(url);
 	
 	if (response.status === 502) {
 		await checkForNewComments();
 	} else if (response.status != 200) {
 		alert(response.statusText);
-		await new Promise(resolve => setTimeout(resolve, 1000));
+		await new Promise(resolve => setTimeout(resolve, 3000));
 		await checkForNewComments(url);
 	} else {
-		response.json(comments => {
-			console.log(comments)
+		// console.log("hye!")
+		response.json().then(comments => {
+			if (comments.length > numOfComments) {
+				commentsDiv.innerHTML = "";
+				loadComments(comments);
+			}
 		})
+		checkForNewComments(url)
 	}
 }
-
-// sample long polling technique
-/*
-async function asyncFetchComments() {
-	let response = await fetch(COMMENTS_URL);
-
-	if (response.status == 502) {
-		// Status 502 is a connection timeout error,
-		// may happen when the connection was pending for too long,
-		// and the remote server or a proxy closed it
-		// let's reconnect
-		await asyncFetchComments();
-	} else if (response.status != 200) {
-		// An error - let's show it
-		showMessage(response.statusText);
-		// Reconnect in one second
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		await asyncFetchComments();
-	} else {
-		// Get and show the message
-		let message = await response.text();
-		showMessage(message);
-		// Call subscribe() again to get the next message
-		await asyncFetchComments();
-	}
-}
-*/
 
 // fetches and loads comments onto DOM
 function getFetch(url) {
@@ -100,13 +80,13 @@ function getFetch(url) {
 	.then(resp => resp.json())
 	.then(comments => {
 		numOfComments = comments.length;
-		console.log(numOfComments)
+		// console.log(numOfComments)
 		loadComments(comments);
 	})
 }
 
 // sends a post request with new comment
-function postFetch(url) {
+function postFetch(url, commenter, comment) {
 	fetch(url, {
 		method: "POST",
 		headers: HEADERS,
