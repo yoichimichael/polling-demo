@@ -11,7 +11,10 @@ const commentsDiv = document.querySelector('div.comments');
 
 // event listeners
 // swap second argument of DOMContentLoaded event to switch polling techniques
-document.addEventListener("DOMContentLoaded", asyncFetchComments());
+document.addEventListener("DOMContentLoaded", () => {
+	getFetch(COMMENTS_URL);
+	asyncFetchComments(COMMENTS_URL);
+});
 commentForm.addEventListener("submit", handleSubmit);
 
 function handleSubmit(e) {
@@ -29,9 +32,24 @@ function fetchComments() {
 	let interval = setInterval(getFetch, 3000, COMMENTS_URL);
 }
 
-async function asyncFetchComments() {
-	let response = await fetch(COMMENTS_URL);
+let numOfComments;
+
+// returns sets above variable and returns comments
+async function asyncFetchComments(url) {
+	let response = await fetch(url);
+	numOfComments = response.json().length;
 	return response.json();
+}
+
+async function checkForNewComments() {
+	let comments = await asyncFetchComments(COMMENTS_URL);
+	if(comments.length > numOfComments) {
+		loadComments(comments);
+	} else {
+		setTimeout(() => {
+			checkForNewComments();
+    		}, 4000);
+	}
 }
 
 // long polling technique
@@ -60,6 +78,7 @@ async function asyncFetchComments() {
 }
 
 
+// fetches and loads comments onto DOM
 function getFetch(url) {
 	// clears comments section before repopulating
 	commentsDiv.innerHTML = "";
@@ -67,14 +86,11 @@ function getFetch(url) {
 	fetch(url)
 	.then(resp => resp.json())
 	.then(comments => {
-		comments.forEach(comment => {
-			let p = document.createElement('p');
-			p.innerText = `${comment.content} - ${comment.name}`;
-			commentsDiv.appendChild(p);
-		});
+		loadComments(comments);
 	})
 }
 
+// sends a post request with new comment
 function postFetch(url) {
 	fetch(url, {
 		method: "POST",
@@ -84,4 +100,13 @@ function postFetch(url) {
 			content: comment
 		})
 	})	
+}
+
+// loads comments, no return
+function loadComments(comments) {
+	comments.forEach(comment => {
+		let p = document.createElement('p');
+		p.innerText = `${comment.content} - ${comment.name}`;
+		commentsDiv.appendChild(p);
+	});
 }
