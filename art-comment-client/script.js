@@ -13,7 +13,7 @@ const commentsDiv = document.querySelector('div.comments');
 // swap second argument of DOMContentLoaded event to switch polling techniques
 document.addEventListener("DOMContentLoaded", () => {
 	getFetch(COMMENTS_URL);
-	asyncFetchComments(COMMENTS_URL);
+	checkForNewComments(COMMENTS_URL);
 });
 commentForm.addEventListener("submit", handleSubmit);
 
@@ -25,7 +25,6 @@ function handleSubmit(e) {
 	postFetch(COMMENTS_URL)
 }
 
-
 // regular polling technique
 // sends a get request  to API for comments every 3 seconds
 function fetchComments() {
@@ -36,23 +35,37 @@ let numOfComments;
 
 // returns sets above variable and returns comments
 async function asyncFetchComments(url) {
-	let response = await fetch(url);
-	numOfComments = response.json().length;
-	return response.json();
+	// let promise = await fetch(url);
+	fetch(url)
+	.then(resp => resp.json())
+	.then(comments => {
+		numOfComments = comments.length;
+		console.log(numOfComments)
+		return comments;
+	})
+	// let comments = response.json()
+	// console.log(comments);
+	// numOfComments = response.json().length;
 }
 
-async function checkForNewComments() {
-	let comments = await asyncFetchComments(COMMENTS_URL);
-	if(comments.length > numOfComments) {
-		loadComments(comments);
+async function checkForNewComments(url) {
+	let response = await fetch(url);
+	
+	if (response.status === 502) {
+		await checkForNewComments();
+	} else if (response.status != 200) {
+		alert(response.statusText);
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		await checkForNewComments(url);
 	} else {
-		setTimeout(() => {
-			checkForNewComments();
-    		}, 4000);
+		response.json(comments => {
+			console.log(comments)
+		})
 	}
 }
 
-// long polling technique
+// sample long polling technique
+/*
 async function asyncFetchComments() {
 	let response = await fetch(COMMENTS_URL);
 
@@ -76,7 +89,7 @@ async function asyncFetchComments() {
 		await asyncFetchComments();
 	}
 }
-
+*/
 
 // fetches and loads comments onto DOM
 function getFetch(url) {
@@ -86,6 +99,8 @@ function getFetch(url) {
 	fetch(url)
 	.then(resp => resp.json())
 	.then(comments => {
+		numOfComments = comments.length;
+		console.log(numOfComments)
 		loadComments(comments);
 	})
 }
